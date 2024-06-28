@@ -2,7 +2,7 @@
 import { SessionProvider } from "next-auth/react";
 import SidebarNavigation from "./components/ SidebarNavigation/SidebarNavigation";
 import NewTweetForm from "./components/NewTweetForm";
-import { Session } from "inspector";
+import RecentTweets from "./components/RecentTweets";
 
 export default function Home() {
   return (
@@ -14,6 +14,7 @@ export default function Home() {
             <h1 className="mb-2 px-4 text-lg font-bold">Home</h1>
           </header>
           <NewTweetForm />
+          <RecentTweets />
         </div>
       </div>
     </SessionProvider>

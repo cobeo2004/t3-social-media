@@ -1,13 +1,5 @@
-import React, {
-  type ButtonHTMLAttributes,
-  type DetailedHTMLProps,
-} from "react";
-type ButtonProps = Partial<{
-  small: boolean;
-  gray: boolean;
-  className: string;
-}> &
-  DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>;
+import React from "react";
+import { type ButtonProps } from "~/types";
 
 const Button = ({ small, gray, className, ...props }: ButtonProps) => {
   const sizeClasses = small ? "px-2 py-1" : "px-4 py-2 font-bold";

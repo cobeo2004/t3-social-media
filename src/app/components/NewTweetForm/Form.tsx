@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import Button from "../Button";
+import Button from "../Button/default.button";
 import ProfileImage from "../ProfileImage";
 import {
   type FormEvent,

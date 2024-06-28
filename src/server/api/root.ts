@@ -1,4 +1,4 @@
-import { tweetRouter } from "~/server/api/routers/post";
+import { tweetRouter } from "~/server/api/routers/tweet";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
