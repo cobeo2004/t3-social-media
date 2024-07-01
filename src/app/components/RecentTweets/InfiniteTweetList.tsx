@@ -13,19 +13,19 @@ const InfiniteTweetList = ({
   if (isLoading) return <h1>Loading...</h1>;
   if (isError) return <h1>Error...</h1>;
 
-  if (tweets === null || tweets.length === 0) {
+  if (tweets === null || tweets?.length === 0) {
     return (
       <h2 className="my-4 text-center text-2xl text-gray-500">No Swifts</h2>
     );
   }
   return (
     <InifiniteScroll
-      dataLength={tweets.length}
+      dataLength={tweets!.length}
       next={fetchNewTweets}
       hasMore={hasMore}
       loader={"Loading"}
     >
-      {tweets.map((tweet) => {
+      {tweets!.map((tweet) => {
         return <TweetCard key={tweet.id} {...tweet} />;
       })}
     </InifiniteScroll>

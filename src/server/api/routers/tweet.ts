@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { z } from "zod";
 
 import {
@@ -53,5 +58,21 @@ export const tweetRouter = createTRPCRouter({
     .input(z.object({ content: z.string() }))
     .mutation(async ({ input: { content }, ctx }) => {
       return await ctx.db.tweet.create({ data: { content, userId: ctx.session.user.id } });
+    }),
+  toggleLike: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ input: { id }, ctx }) => {
+      const data = { tweetId: id, userId: ctx.session.user.id };
+      const existedTweetLike = await ctx.db.like.findUnique({
+        where: { userId_tweetId: data }
+      })
+
+      if (existedTweetLike === null) {
+        await ctx.db.like.create({ data });
+        return { likeAdded: true }
+      } else {
+        await ctx.db.like.delete({ where: { userId_tweetId: data } });
+        return { likeAdded: false }
+      }
     })
 });

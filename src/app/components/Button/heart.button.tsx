@@ -6,9 +6,15 @@ import IconHoverEffect from "../functions/IconHover.effect";
 type HeartButtonProps = {
   likeCount: number;
   likedByMe: boolean;
-};
+  isLoading: boolean;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-const HeartButton = ({ likedByMe, likeCount }: HeartButtonProps) => {
+const HeartButton = ({
+  likedByMe,
+  likeCount,
+  onClick,
+  isLoading,
+}: HeartButtonProps) => {
   const sess = useSession();
   const HeartIcon = likedByMe ? VscHeartFilled : VscHeart;
   if (sess.status !== "authenticated") {
@@ -21,7 +27,9 @@ const HeartButton = ({ likedByMe, likeCount }: HeartButtonProps) => {
   }
   return (
     <button
+      disabled={isLoading}
       title="Like"
+      onClick={onClick}
       className={`group flex items-center gap-1 self-start transition-colors duration-200 ${likedByMe ? "text-red-500" : "text-gray-500 hover:text-red-500 focus-visible:text-red-500"}`}
     >
       <IconHoverEffect red>

@@ -20,14 +20,42 @@ const Form = () => {
     if (textArea) updateAreaTextSize(textArea);
     textAreaRef.current = textArea;
   }, []);
+  const trpcUtils = api.useUtils();
   useLayoutEffect(() => {
     updateAreaTextSize(textAreaRef.current);
   }, [input]);
 
   const createTweetApi = api.post.create.useMutation({
     onSuccess: (newTweet) => {
-      console.log(newTweet);
       setInput("");
+      trpcUtils.post.infiniteTweetFeed.setInfiniteData({}, (oldData) => {
+        if (oldData === null || oldData?.pages[0] === null) return undefined;
+        if (sess.status !== "authenticated") return undefined;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const newCacheTweet = {
+          ...newTweet,
+          likeCount: 0,
+          likedByMe: false,
+          user: {
+            id: sess.data.user.id,
+            name: sess.data.user.name ?? null,
+            image: sess.data.user.image ?? null,
+          },
+        };
+        return {
+          ...oldData,
+          pages: [
+            {
+              ...oldData!.pages[0],
+
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+              tweets: [newCacheTweet, ...oldData!.pages[0]!.tweets],
+            },
+            ...oldData!.pages.slice(1),
+          ],
+        };
+      });
     },
   });
 

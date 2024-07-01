@@ -1,8 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import Link from "next/link";
 import React from "react";
 import { type Tweet } from "~/types";
 import ProfileImage from "../ProfileImage";
 import HeartButton from "../Button/heart.button";
+import { api } from "~/trpc/react";
 
 const TweetCard = ({
   id,
@@ -12,6 +18,41 @@ const TweetCard = ({
   likeCount,
   likedByMe,
 }: Tweet) => {
+  const trpcUtils = api.useUtils();
+  const toggleLikeMutation = api.post.toggleLike.useMutation({
+    onSuccess: ({ likeAdded }) => {
+      const updateData: Parameters<
+        typeof trpcUtils.post.infiniteTweetFeed.setInfiniteData
+      >[1] = (oldData) => {
+        if (oldData === null) return;
+        const countMod = likeAdded ? 1 : -1;
+        return {
+          ...oldData,
+          pages: oldData?.pages.map((page) => {
+            return {
+              ...page,
+              tweets: page.tweets.map((tweet) => {
+                if (tweet.id === id) {
+                  return {
+                    ...tweet,
+                    likeCount: tweet.likeCount + countMod,
+                    likedByMe: likeAdded,
+                  };
+                }
+                return tweet;
+              }),
+            };
+          }),
+        };
+      };
+      trpcUtils.post.infiniteTweetFeed.setInfiniteData({}, updateData);
+    },
+  });
+
+  const handleLike = () => {
+    toggleLikeMutation.mutate({ id });
+  };
+
   const dateFormatter = new Intl.DateTimeFormat("en-US", {
     dateStyle: "short",
   });
@@ -34,7 +75,12 @@ const TweetCard = ({
           </span>
         </div>
         <p className="whitespace-pre-wrap">{content}</p>
-        <HeartButton likeCount={likeCount} likedByMe={likedByMe} />
+        <HeartButton
+          likeCount={likeCount}
+          likedByMe={likedByMe}
+          onClick={handleLike}
+          isLoading={toggleLikeMutation.isPending}
+        />
       </div>
     </li>
   );

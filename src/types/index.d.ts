@@ -24,7 +24,7 @@ export declare type Tweet = {
 };
 
 export declare type InfiniteTweetListProps = {
-    tweets: Array<Tweet>;
+    tweets?: Array<Tweet>;
     isLoading: boolean;
     isError: boolean;
     hasMore: boolean;

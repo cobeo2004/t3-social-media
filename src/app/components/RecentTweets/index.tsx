@@ -10,11 +10,12 @@ const RecentTweets = () => {
   );
   return (
     <InfiniteTweetList
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       tweets={tweets.data?.pages.flatMap((page) => page.tweets) as Tweet[]}
       isError={tweets.isError}
       isLoading={tweets.isLoading}
       hasMore={tweets.hasNextPage}
-      fetchNextPage={tweets.fetchNextPage}
+      fetchNewTweets={tweets.fetchNextPage}
     />
   );
 };
